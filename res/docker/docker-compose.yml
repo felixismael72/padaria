@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+
+  bakery_db:
+    build:
+      dockerfile: ./docker/files/Dockerfile.postgres
+      context: "../"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345678
+      - POSTGRES_DB=bakery_db
+    container_name: bakery_db
+    ports:
+      - "5432:5432"
+    networks:
+      - bakery
+
+networks:
+  bakery:
+    driver: bridge
