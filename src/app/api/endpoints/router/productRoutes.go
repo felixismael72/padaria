@@ -1,8 +1,9 @@
 package router
 
 import (
-	"github.com/labstack/echo/v4"
 	"padaria/src/app/api/dicontainer"
+
+	"github.com/labstack/echo/v4"
 )
 
 func loadProductRoutes(api *echo.Group) {
@@ -11,4 +12,5 @@ func loadProductRoutes(api *echo.Group) {
 	productHandlers := dicontainer.GetProductHandlers()
 
 	productGroup.POST("/new", productHandlers.PostProduct)
+	productGroup.GET("", productHandlers.GetProducts)
 }
