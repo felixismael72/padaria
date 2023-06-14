@@ -88,6 +88,28 @@ func (handler ProductHandlers) PutProduct(c echo.Context) error {
 	return c.NoContent(http.StatusNoContent)
 }
 
+func (handler ProductHandlers) DeleteProduct(c echo.Context) error {
+	productID, err := strconv.Atoi(c.Param("productID"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response.NewError(
+			"O id desse produto não pôde ser processado.",
+			http.StatusBadRequest,
+		),
+		)
+	}
+
+	err = handler.productService.RemoveProduct(productID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, response.NewError(
+			"Oops! Parece que o serviço de dados está indisponível.",
+			http.StatusInternalServerError,
+		),
+		)
+	}
+
+	return c.NoContent(http.StatusNoContent)
+}
+
 func NewProductHandlers(productService primary.ProductManager) *ProductHandlers {
 	return &ProductHandlers{productService: productService}
 }

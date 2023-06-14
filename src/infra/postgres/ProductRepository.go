@@ -104,6 +104,25 @@ func (repo ProductRepository) UpdateProduct(product domain.Product) error {
 	return nil
 }
 
+func (repo ProductRepository) DeleteProduct(productID int) error {
+	conn, err := repo.getConnection()
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+	defer repo.closeConnection(conn)
+
+	query := `delete from product where id = $1;`
+
+	_, err = conn.Exec(query, productID)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+
+	return nil
+}
+
 func NewProductRepository(manager connectorManager) *ProductRepository {
 	return &ProductRepository{manager}
 }

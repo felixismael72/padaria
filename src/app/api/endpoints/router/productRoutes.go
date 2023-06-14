@@ -14,4 +14,5 @@ func loadProductRoutes(api *echo.Group) {
 	productGroup.POST("/new", productHandlers.PostProduct)
 	productGroup.GET("", productHandlers.GetProducts)
 	productGroup.PUT("/:productID/edit", productHandlers.PutProduct)
+	productGroup.DELETE("/:productID/remove", productHandlers.DeleteProduct)
 }
