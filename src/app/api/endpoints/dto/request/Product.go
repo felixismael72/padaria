@@ -1,8 +1,9 @@
 package request
 
 import (
-	"padaria/src/core/domain"
 	"time"
+
+	"padaria/src/core/domain"
 )
 
 type Product struct {
@@ -13,4 +14,8 @@ type Product struct {
 
 func (dto Product) ToDomain() *domain.Product {
 	return domain.NewProduct(0, dto.Name, dto.Code, dto.Price, time.Time{})
+}
+
+func (dto Product) ToDomainWithID(id int) *domain.Product {
+	return domain.NewProduct(id, dto.Name, dto.Code, dto.Price, time.Time{})
 }

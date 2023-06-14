@@ -73,6 +73,37 @@ func (repo ProductRepository) SelectProducts() ([]domain.Product, error) {
 	return products, nil
 }
 
+func (repo ProductRepository) UpdateProduct(product domain.Product) error {
+	conn, err := repo.getConnection()
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+	defer repo.closeConnection(conn)
+
+	query := `update product set 
+							name 						= $1, 
+							code 						= $2,
+							price 					= $3,
+							expiration_date = $4
+						where id = $5;`
+
+	_, err = conn.Exec(
+		query,
+		product.Name(),
+		product.Code(),
+		product.Price(),
+		product.ExpirationDate(),
+		product.ID(),
+	)
+	if err != nil {
+		log.Print(err)
+		return err
+	}
+
+	return nil
+}
+
 func NewProductRepository(manager connectorManager) *ProductRepository {
 	return &ProductRepository{manager}
 }
