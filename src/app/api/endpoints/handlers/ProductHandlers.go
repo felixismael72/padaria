@@ -1,11 +1,13 @@
 package handlers
 
 import (
-	"github.com/labstack/echo/v4"
 	"net/http"
+
 	"padaria/src/app/api/endpoints/dto/request"
 	"padaria/src/app/api/endpoints/dto/response"
 	"padaria/src/core/interfaces/primary"
+
+	"github.com/labstack/echo/v4"
 )
 
 type ProductHandlers struct {
@@ -32,6 +34,24 @@ func (handler ProductHandlers) PostProduct(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, &response.Created{ID: productID})
+}
+
+func (handler ProductHandlers) GetProducts(c echo.Context) error {
+	products, err := handler.productService.ListProducts()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, response.NewError(
+			"Oops! Parece que o serviço de dados está indisponível.",
+			http.StatusInternalServerError,
+		),
+		)
+	}
+
+	var productDTOList []response.Product
+	for _, product := range products {
+		productDTOList = append(productDTOList, *response.NewProduct(product))
+	}
+
+	return c.JSON(http.StatusOK, productDTOList)
 }
 
 func NewProductHandlers(productService primary.ProductManager) *ProductHandlers {

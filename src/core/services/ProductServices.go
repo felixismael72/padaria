@@ -2,6 +2,7 @@ package services
 
 import (
 	"log"
+
 	"padaria/src/core/domain"
 	"padaria/src/core/interfaces/primary"
 	"padaria/src/core/interfaces/repository"
@@ -21,6 +22,16 @@ func (service ProductServices) RegisterProduct(product domain.Product) (int, err
 	}
 
 	return productID, nil
+}
+
+func (service ProductServices) ListProducts() ([]domain.Product, error) {
+	products, err := service.productRepository.SelectProducts()
+	if err != nil {
+		log.Print(err)
+		return nil, err
+	}
+
+	return products, nil
 }
 
 func NewProductServices(productRepository repository.ProductLoader) *ProductServices {
