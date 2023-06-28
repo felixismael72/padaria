@@ -1,0 +1,65 @@
+basePath: /api
+definitions:
+  request.Product:
+    properties:
+      code:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  response.Created:
+    properties:
+      id:
+        type: integer
+    type: object
+  response.Error:
+    properties:
+      msg:
+        type: string
+      statusCode:
+        type: integer
+    type: object
+host: localhost
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is an example bakery server.
+  title: Padaria API
+  version: "1.0"
+paths:
+  /product/new:
+    post:
+      consumes:
+      - application/json
+      description: This resources is responsible for registering a product into the
+        database
+      parameters:
+      - description: Product Body
+        in: body
+        name: productBody
+        required: true
+        schema:
+          $ref: '#/definitions/request.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.Created'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Register a product in the database
+      tags:
+      - Product
+swagger: "2.0"

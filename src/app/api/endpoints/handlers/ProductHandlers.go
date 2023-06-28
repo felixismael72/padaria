@@ -15,6 +15,17 @@ type ProductHandlers struct {
 	productService primary.ProductManager
 }
 
+// PostProduct godoc
+// @Summary      Register a product in the database
+// @Description  This resources is responsible for registering a product into the database
+// @Tags         Product
+// @Accept       json
+// @Produce      json
+// @Param        productBody body request.Product true "Product Body"
+// @Success      201  {object}  response.Created
+// @Failure      400  {object}  response.Error
+// @Failure      500  {object}  response.Error
+// @Router       /product/new [post]
 func (handler ProductHandlers) PostProduct(c echo.Context) error {
 	var product request.Product
 	if err := c.Bind(&product); err != nil {

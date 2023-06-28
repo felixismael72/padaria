@@ -3,11 +3,24 @@ package main
 import (
 	"fmt"
 	"log"
+
 	"padaria/src/app/api/config"
 	"padaria/src/app/api/endpoints/router"
 	"padaria/src/infra/postgres"
+
+	_ "padaria/src/app/api/docs"
 )
 
+// @title Padaria API
+// @version 1.0
+// @description This is an example bakery server.
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @host localhost
+// @BasePath /api
 func main() {
 	setupPostgres()
 	serveAddress(config.ServerHost, config.ServerPort)
