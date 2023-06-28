@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
@@ -64,7 +65,58 @@ func (postProductCases) testWhenItHasAHappyPath(t *testing.T) {
 }
 
 func (postProductCases) testWhenItCannotProcessTheProduct(t *testing.T) {
+	controller := gomock.NewController(t)
+	productService := serviceMock.NewMockProductManager(controller)
+	productHandlers := NewProductHandlers(productService)
+	requestBody := `{}`
+	body := strings.NewReader(requestBody)
+	request := httptest.NewRequest(http.MethodPost, postProductURL, body)
+	recorder := httptest.NewRecorder()
+	server := echo.New()
+	context := server.NewContext(request, recorder)
+	expectedJSON := fmt.Sprintf(`
+			{
+				"msg": "%s",
+				"statusCode": %d
+			}
+		`,
+		"Algo está incompatível na sua requisição.",
+		http.StatusBadRequest,
+	)
+	expectedStatusCode := http.StatusBadRequest
+
+	_ = productHandlers.PostProduct(context)
+
+	assert.JSONEq(t, expectedJSON, recorder.Body.String())
+	assert.Equal(t, expectedStatusCode, recorder.Code)
 }
 
 func (postProductCases) testWhenItReceivesAConnectionError(t *testing.T) {
+	controller := gomock.NewController(t)
+	productService := serviceMock.NewMockProductManager(controller)
+	err := errors.New("connection error")
+	productService.EXPECT().RegisterProduct(gomock.Any()).Return(-1, err).MaxTimes(1)
+	productHandlers := NewProductHandlers(productService)
+	requestBody := `{}`
+	body := strings.NewReader(requestBody)
+	request := httptest.NewRequest(http.MethodPost, postProductURL, body)
+	request.Header.Add(echo.HeaderContentType, "application/json")
+	recorder := httptest.NewRecorder()
+	server := echo.New()
+	context := server.NewContext(request, recorder)
+	expectedJSON := fmt.Sprintf(`
+			{
+				"msg": "%s",
+				"statusCode": %d
+			}
+		`,
+		"Oops! Parece que o serviço de dados está indisponível.",
+		http.StatusInternalServerError,
+	)
+	expectedStatusCode := http.StatusInternalServerError
+
+	_ = productHandlers.PostProduct(context)
+
+	assert.JSONEq(t, expectedJSON, recorder.Body.String())
+	assert.Equal(t, expectedStatusCode, recorder.Code)
 }
